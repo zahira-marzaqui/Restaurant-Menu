@@ -1,0 +1,33 @@
+# Environnement virtuel Python
+venv/
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
+
+# Fichiers de base de données temporaires
+*.db
+*.sqlite3
+
+# Instance folder de Flask (config privée / bases locales)
+instance/
+
+# Variables environnement (clés secrètes, mots de passe)
+.env
+
+# Fichiers de log
+*.log
+
+# Dossier des images uploadées
+uploads/
+
+# Cache de l'éditeur (comme VS Code, PyCharm, etc.)
+.vscode/
+.idea/
+*.swp
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
