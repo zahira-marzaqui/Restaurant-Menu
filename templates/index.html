@@ -1,36 +1,116 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Menu Restaurant</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu Extractor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-ENjdO4Dr2bkBIFxQpeoA6LF0s6Z1p6MSbA7tn1ZRr+QBccV5Ck5I1LV1C2YdKLu9"
+  crossorigin="anonymous"
+/>
 </head>
 <body>
-    {% comment %} <h1>Ajouter un plat</h1>
-    <form method="POST" enctype="multipart/form-data">
-        <label>Nom :</label>
-        <input type="text" name="nom" required><br><br>
+  <div class="container">
+    <h1><span class="purple">Instant Menu Reader </span> </h1>
+    <p class="subtext">Extract data from your menu instantly. Snap, scan, and get your data fast and precise!</p>
 
-        <label>Prix :</label>
-        <input type="number" step="0.01" name="prix" required><br><br>
+    <div class="upload-box">
+      <i class="bi bi-cloud-arrow-up"></i>
+      <p><strong>Drag & Drop Your Menu Here</strong></p>
+      <p style="color: gray; font-size: 0.9rem;" class="m-2">Supported formats (png, jpg, jpeg, bmp, tiff, tif)</p>
+      <div class="file-upload-wrapper">
+        <input type="file" id="fileInput" accept="image/*" />
+        <label for="fileInput" class="custom-upload-btn">
+          {# <i class="bi bi-upload"></i> #}
 
-        <label>Image :</label>
-        <input type="file" name="image"><br><br>
+           Choisir une image
+        </label>
+      </div>
 
-        <button type="submit">Ajouter</button>
-    </form>
+    </div>
+    <div class="center-btn-wrapper">
+      <button class="btn btn-lg">
+      <i class="bi bi-stars"></i>
+      Extract Data
+      </button>
+    </div>
+    
 
-    <h2>Liste des plats</h2>
-    <ul>
-        {% for plat in plats %}
-            <li>
-                {{ plat.nom }} - {{ plat.prix }} DH
-                {% if plat.image_url %}
-                    <br>
-                    <img src="{{ url_for('static', filename=plat.image_url) }}" alt="{{ plat.nom }}" width="100">
-                {% endif %}
-            </li>
-        {% endfor %}
-        
-    </ul> {% endcomment %}
+    <div class="result">
+      <div class="result-buttons">
+        <button onclick="copyTable()"><i class="bi bi-clipboard"></i></button>
+        <button onclick="downloadExcel()"><i class="bi bi-file-earmark-excel"></i></button>
+      </div>
+
+      <table id="extractedTable" style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding: 8px; border-bottom: 2px solid #ddd;">Plat</th>
+            <th style="text-align: left; padding: 8px; border-bottom: 2px solid #ddd;">Prix</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2025 <a href="#">TrtDigital</a>. All rights reserved.
+  </footer>
+
+  <!-- SheetJS pour export Excel -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+  // Exemple de données extraites (à remplacer dynamiquement avec le résultat OCR)
+  const extractedData = [
+    { plat: "Pizza Margherita", prix: "8.00 €" },
+    { plat: "Spaghetti Bolognese", prix: "10.50 €" },
+    { plat: "Salade César", prix: "7.00 €" }
+  ];
+
+  // Injecter les données dans le tableau
+  const tbody = document.querySelector("#extractedTable tbody");
+  extractedData.forEach(item => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.plat}</td>
+      <td style="padding: 8px; border-bottom: 1px solid #eee;">${item.prix}</td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  // Copier tableau
+  function copyTable() {
+    const rows = document.querySelectorAll("#extractedTable tr");
+    let text = "";
+    rows.forEach(row => {
+      const cells = row.querySelectorAll("th, td");
+      const rowText = Array.from(cells).map(cell => cell.innerText).join("\t");
+      text += rowText + "\n";
+    });
+    navigator.clipboard.writeText(text);
+    alert("Contenu copié !");
+  }
+
+  
+
+  // Télécharger en Excel
+  function downloadExcel() {
+    const worksheet = XLSX.utils.json_to_sheet(extractedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Menu");
+    XLSX.writeFile(workbook, "menu.xlsx");
+  }
+</script>
+
+
 </body>
 </html>

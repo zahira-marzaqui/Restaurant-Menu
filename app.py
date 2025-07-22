@@ -20,31 +20,7 @@ db.init_app(app)
 
 @app.route("/", methods=['GET', 'POST'])
 def accueil():
-    if request.method == 'POST':
-        nom = request.form.get('nom')
-        prix = request.form.get('prix')
-        image = request.files.get('image')
-
-        # Sauvegarder l'image si elle existe
-        image_path = ""
-        if image and image.filename != '':
-            filename = secure_filename(image.filename)
-            upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            image.save(upload_path)
-            image_path = os.path.join("uploads", filename).replace("\\", "/")
-        else:
-            image_path = ""
-
-
-        nouveau_plat = Plat(nom=nom, prix=prix, image_url=image_path)
-        db.session.add(nouveau_plat)
-        db.session.commit()
-
-        return redirect(url_for('accueil'))
-
-    plats = Plat.query.all()
-    return render_template("index.html", plats=plats)
-
+    return render_template("index.html")
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
