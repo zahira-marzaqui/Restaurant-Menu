@@ -54,29 +54,29 @@
     }
 
       /* Style du label qui agit comme bouton */
-    .custom-upload-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background-color: #ede9fe;
-        color: #4c1d95;
-        border: 1px solid #c4b5fd;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+      .custom-upload-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background-color: #ede9fe;
+          color: #4c1d95;
+          border: 1px solid #c4b5fd;
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-size: 0.95rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
 
-    .custom-upload-btn:hover {
-        background-color: #ddd6fe;
-    }
-    .center-btn-wrapper {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
+      .custom-upload-btn:hover {
+          background-color: #ddd6fe;
+      }
+      .center-btn-wrapper {
+          display: flex;
+          justify-content: center;
+          margin-top: 20px;
+      }
     .btn {
       background-color: #7c3aed;
       color: white;
@@ -95,6 +95,10 @@
     .btn:hover {
       background-color: #6d28d9;
     }
+    .processing {
+    background-color: #a78bfa!important;
+    /* border-color: #7c3aed !important; */
+    } 
     .result {
       margin-top: 2rem;
       background-color: #f3f4f6;

@@ -29,18 +29,23 @@
 
            Choisir une image
         </label>
+        <p id="fileNameDisplay" style="margin-top: 10px; color: #6b7280;"></p>
+
+
       </div>
 
     </div>
     <div class="center-btn-wrapper">
-      <button class="btn btn-lg">
-      <i class="bi bi-stars"></i>
-      Extract Data
+      <button id="extractButton" class="btn mt-3" onclick="extractData()">
+        <span id="btnIcon" class="bi bi-stars me-2"></span>
+        <span id="btnText"> Extract Data</span>
+        <span id="btnSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
       </button>
+
     </div>
     
 
-    <div class="result">
+    <!--  <div class="result">
       <div class="result-buttons">
         <button onclick="copyTable()"><i class="bi bi-clipboard"></i></button>
         <button onclick="downloadExcel()"><i class="bi bi-file-earmark-excel"></i></button>
@@ -57,7 +62,17 @@
           
         </tbody>
       </table>
-    </div>
+    </div> -->
+    <div class="result">
+  <div class="result-buttons">
+    <button onclick="copyText()"><i class="bi bi-clipboard"></i></button>
+    <button onclick="downloadText()"><i class="bi bi-download"></i></button>
+  </div>
+  <p id="extractedText" style="white-space: pre-line;">
+    Le texte extrait apparaîtra ici...
+  </p>
+</div>
+
 
   </div>
 
@@ -68,7 +83,7 @@
   <!-- SheetJS pour export Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-<script>
+<!--<script>
   // Exemple de données extraites (à remplacer dynamiquement avec le résultat OCR)
   const extractedData = [
     { plat: "Pizza Margherita", prix: "8.00 €" },
@@ -109,7 +124,100 @@
     XLSX.utils.book_append_sheet(workbook, worksheet, "Menu");
     XLSX.writeFile(workbook, "menu.xlsx");
   }
+</script>-->
+<script>
+  function extractData() {
+  const button = document.getElementById("extractButton");
+  const btnText = document.getElementById("btnText");
+  const btnSpinner = document.getElementById("btnSpinner");
+  const fileInput = document.getElementById("fileInput");
+
+  if (!fileInput.files.length) {
+    alert("Veuillez d'abord sélectionner une image.");
+    return;
+  }
+
+  // Changer l'état du bouton
+  btnText.textContent = "Processing...";
+  btnIcon.className = "bi bi-hourglass-split me-2";
+  button.classList.remove("btn-primary");
+  button.classList.add("processing");
+  btnSpinner.classList.remove("d-none");
+  button.disabled = true;
+
+  const formData = new FormData();
+  formData.append("image", fileInput.files[0]);
+
+  fetch("/extract", {
+    method: "POST",
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Texte extrait :", data.text);
+    //alert("Texte extrait avec succès !");
+    // Ici tu peux afficher le texte OCR dans la page si tu veux
+  })
+  .catch(error => {
+    console.error("Erreur lors de l'extraction :", error);
+    alert("Une erreur est survenue.");
+  })
+  .finally(() => {
+    // Revenir à l'état initial
+    btnText.textContent = "Extract Data";
+    btnIcon.className = "bi bi-stars me-2";
+    button.classList.remove("processing");
+    btnSpinner.classList.add("d-none");
+    button.disabled = false;
+  });
+}
+
+// Affiche le nom du fichier sélectionné
+document.getElementById("fileInput").addEventListener("change", function() {
+  const file = this.files[0];
+  const display = document.getElementById("fileNameDisplay");
+
+  if (file) {
+    display.textContent = `${file.name}`;
+  } else {
+    display.textContent = "";
+  }
+});
+
 </script>
+
+<script>
+
+
+document.querySelector(".btn").addEventListener("click", () => {
+  const fileInput = document.getElementById("fileInput");
+  if (fileInput.files.length === 0) {
+    alert("Veuillez choisir une image.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("image", fileInput.files[0]);
+
+  fetch("/extract", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.text) {
+      document.getElementById("extractedText").innerText = data.text;
+    } else {
+      document.getElementById("extractedText").innerText = "Aucun texte extrait.";
+    }
+  })
+  .catch(err => {
+    alert("Erreur pendant l'extraction");
+    console.error(err);
+  });
+});
+</script>
+
 
 
 </body>
